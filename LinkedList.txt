@@ -1,0 +1,254 @@
+class LinkedList implements Collection
+{
+    private Node dummy;
+    private Node head;
+    private Node tail;
+    private int size;
+    
+    public LinkedList() 
+    {
+        dummy = new Node(-1);
+        head  = dummy;
+        tail  = dummy;
+        size = 0;
+    }
+    // TODO: implement the necessary methods here.
+    
+    /*
+      -------------------------------------------------------------------------------------------------------------------------
+                Inserts a node at a particular index by pointing the incoming node to the next node that is right
+                after the index specified. The node previous to the specified index is then pointed to the
+                incoming note. In the case where the user wants to insert at the first position the previous
+                node becomes the dummy node. And in cases where the user is not accessing the list correctly an
+                exception is thrown to alert the user of his/her mistake. In addition the size gets incremented
+                to make finding the tail node easier.
+      --------------------------------------------------------------------------------------------------------------------------
+    */
+    
+    public void insert(int index, int data)
+    {
+        size++;
+        Node newNode = new Node(data);
+        Node current = head.getNext();
+        
+        if(index ==  0)
+        {
+            newNode.setNext(head.getNext());
+            dummy.setNext(newNode);
+        }
+        
+        else if(index >= size)//checks for out of bound access
+            throw new RuntimeException("You are exceeding the list!!!");
+        
+        else if(index < 0)//checks for negative index
+            throw new RuntimeException("Negative indexing!!!");
+        
+        else
+        {
+            for(int i = 0; i < index-1; i++)
+                current = current.getNext();
+            
+            newNode.setNext(current.getNext());
+            current.setNext(newNode);
+        }
+    }
+    
+    /*
+      ------------------------------------------------------------------------------------------------------
+                Inserts a node at the end of the list by pointing the tail node to the incoming
+                node and then letting the tail node become the incoming node. The size is
+                incremented to make finding the tail node easier.
+      -------------------------------------------------------------------------------------------------------
+     */
+    public void append(int data)
+    {
+        size++;
+        Node node = new Node(data);
+        tail.setNext(node);
+        tail = node;
+    }
+    /*
+      ---------------------------------------------------------------------------------------------
+                Inserts a node at the beginning of the list by pointing the incoming node
+                to the head node then letting the dummy node point to the incoming node.
+                The size is incremented to make finding the tail node easier.
+      ----------------------------------------------------------------------------------------------
+    */
+    
+    public void prepend(int data)
+    {
+        size++;
+        Node node = new Node(data);
+        node.setNext(head.getNext());
+        dummy.setNext(node);
+    }
+    /*
+      ---------------------------------------------------------------------------------------------------------
+                Prints the entire list until the tail becomes null. In other words, this method
+                prints until there isn't anymore data in the list. The size is incremented to
+                make finding the tail node easier.
+      ---------------------------------------------------------------------------------------------------------
+    */
+    
+    public void print()
+    {
+       Node current = dummy.getNext();
+       while(tail != null)
+       {
+           System.out.print(current.getData() + " ");
+           current = current.getNext();
+       }
+        System.out.println();
+    }
+    
+    /*
+      ------------------------------------------------------------------------------------------------
+                Returns the data within a particular node based on the specific index.
+                In the case where the user wants to access unrestricted data or junk
+                an exception is thrown to let the user know that he/she is doing something wrong.
+      ------------------------------------------------------------------------------------------------
+    */
+    
+    public int get(int index)
+    {
+        Node current = head.getNext();
+        
+        for(int i = 0; i < index; i++)
+            current = current.getNext();
+        
+        if(index >= size)//checks for out of bound access
+            throw new RuntimeException("You are exceeding the list!!!");
+        
+        else if(index < 0)//checks for negative index
+            throw new RuntimeException("Negative indexing!!!");
+        
+        else
+            return  current.getData();
+    }
+    
+    /*
+      --------------------------------------------------------------------------------
+                Returns the data stored in the first node of the list.
+                An exception is thrown in the case that the list is empty.
+      --------------------------------------------------------------------------------
+    */
+    
+    public int getFirst()
+    {
+        if(head.getNext() == null)
+            throw new RuntimeException("The list is empty!!!");
+        else
+            return head.getNext().getData();
+    }
+    
+    /*
+      --------------------------------------------------------------------------------
+                Returns the data stored in the last node(tail) of the list.
+                An exception is thrown in the case that the list is empty.
+      --------------------------------------------------------------------------------
+    */
+    public int getLast()
+    {
+        Node current = dummy.getNext();
+        for(int i = 0; i< size-1; i++)
+            current = current.getNext();
+        
+        tail = current;
+        
+        if(tail == null)
+            throw new RuntimeException("The list is empty!!!");
+        else
+            return tail.getData();
+    }
+    
+    /*
+      ----------------------------------------------------------------------------------------------------------------------------
+                Deletes a node at a specified index. In the case where the list is either empty or the user tries
+                to access data that is not know to this program an exception is thrown to indicate the user of
+                his/her mistake. In the case where the user wants to remove the first node the dummy will point
+                to its neighbour that is 2 nodes from its existence in memory. In the case where the user wishes
+                to remove a node that is reachable(exist in memory), a node(current) is given the beginning of the
+                list and then the program iterates through each node until the program reaches the node index-1
+                (one node before the actual node(current). The node(current) then points to the second node after it.
+                The size is then decremented to make finding the tail easier.
+      -----------------------------------------------------------------------------------------------------------------------------
+     */
+    
+    public void remove(int index)
+    {
+        if(index >= size)//checks for out of bound access
+            throw new RuntimeException("You are exceeding the list!!!");
+        
+        else if(index < 0)//checks for negative index
+            throw new RuntimeException("Negative indexing!!!");
+        
+        else if(index == 0)
+            dummy.setNext(dummy.getNext().getNext());
+        
+        else
+        {
+            Node current = head.getNext();
+            for(int i = 0; i < index-1; i++)
+                current = current.getNext();
+            
+            current.setNext(current.getNext().getNext());
+        }
+        size--;
+    }
+    
+    /*
+      ----------------------------------------------------------------------------------
+                Throws an exception is the list is empty. If the list
+                is not empty this it points the dummy node to the its
+                second neighbor. The size is then decremented to make
+                finding the tail easier.
+      __________________________________________________________________________________
+    */
+    
+    public void removeFirst()
+    {
+        if(dummy.getNext() == null)
+            throw new RuntimeException("The list is empty!!!");
+        else
+            dummy.setNext(dummy.getNext().getNext());
+        size--;
+    }
+    
+    /*
+      ------------------------------------------------------------------------------------------------
+                Throws an exception is the list is empty. If the list is not empty then
+                this method sets the second to-last node to null, which in turns erases
+                the refernce to the last node. The size is then decremented to make
+                finding the tail easier.
+      ________________________________________________________________________________________________
+    */
+    
+    public void removeLast()
+    {
+        if(dummy.getNext() == null)
+            throw new RuntimeException("The list is empty!!!");
+        else
+        {
+            Node current = head.getNext();
+            
+            for(int i = 0; i < size-2; i++)
+            {
+                current = current.getNext();
+            }
+            tail.setNext(current);
+            current.setNext(null);
+            size--;
+        }
+    }
+    
+    /*
+      -------------------------------------------------------------------------------------
+                Returns the number of nodes in the list(size of the LinkList)
+      -------------------------------------------------------------------------------------
+    */
+    public int size()
+    {
+        return size;
+    }
+}
+	
